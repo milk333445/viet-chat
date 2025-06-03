@@ -112,11 +112,9 @@ function PureMultimodalInput({
   const submitForm = useCallback(() => {
     window.history.replaceState({}, '', `/chat/${chatId}`);
 
-    handleSubmit(undefined, {
-      experimental_attachments: attachments,
-    });
+    handleSubmit()
 
-    setAttachments([]);
+    // setAttachments([]);
     setLocalStorageInput('');
     resetHeight();
 
@@ -144,11 +142,11 @@ function PureMultimodalInput({
 
       if (response.ok) {
         const data = await response.json();
-        const { url, pathname, contentType } = data;
+        const { url, name, contentType } = data;
 
         return {
           url,
-          name: pathname,
+          name: name,
           contentType: contentType,
         };
       }
@@ -265,7 +263,7 @@ function PureMultimodalInput({
       <Textarea
         data-testid="multimodal-input"
         ref={textareaRef}
-        placeholder="Send a message..."
+        placeholder="發送信息..."
         value={input}
         onChange={handleInput}
         className={cx(

@@ -10,7 +10,7 @@ export const PreviewAttachment = ({
   isUploading?: boolean;
 }) => {
   const { name, url, contentType } = attachment;
-
+  console.log('PreviewAttachment', { name, url, contentType });
   return (
     <div data-testid="input-attachment-preview" className="flex flex-col gap-2">
       <div className="w-20 h-16 aspect-video bg-muted rounded-md relative flex flex-col items-center justify-center">
@@ -24,6 +24,17 @@ export const PreviewAttachment = ({
               alt={name ?? 'An image attachment'}
               className="rounded-md size-full object-cover"
             />
+          ) : contentType.startsWith('application/pdf') ? (
+            <div className="text-xs text-center px-2 text-muted-foreground">
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-center text-blue-600 underline"
+              >
+                {'預覽 PDF'}
+              </a>
+            </div>
           ) : (
             <div className="" />
           )

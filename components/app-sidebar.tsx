@@ -35,7 +35,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               className="flex flex-row gap-3 items-center"
             >
               <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
-                Chatbot
+                富邦投信智能小幫手
               </span>
             </Link>
             <Tooltip>
@@ -53,7 +53,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                   <PlusIcon />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent align="end">New Chat</TooltipContent>
+              <TooltipContent align="end">新對話</TooltipContent>
             </Tooltip>
           </div>
         </SidebarMenu>
@@ -61,7 +61,12 @@ export function AppSidebar({ user }: { user: User | undefined }) {
       <SidebarContent>
         <SidebarHistory user={user} />
       </SidebarContent>
-      <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>
+      <SidebarFooter>
+        <div className="text-xs text-muted-foreground px-4 py-2">
+          Powered by 富邦智能小幫手
+        </div>
+        {/* {user && <SidebarUserNav user={user} />} */}
+        </SidebarFooter>
     </Sidebar>
   );
 }

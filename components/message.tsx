@@ -19,6 +19,7 @@ import { MessageEditor } from './message-editor';
 import { DocumentPreview } from './document-preview';
 import { MessageReasoning } from './message-reasoning';
 import type { UseChatHelpers } from '@ai-sdk/react';
+import { ToolResultCollapsible } from './ToolResultCollapsible';
 
 const PurePreviewMessage = ({
   chatId,
@@ -212,6 +213,8 @@ const PurePreviewMessage = ({
                           result={result}
                           isReadonly={isReadonly}
                         />
+                      ) : toolName === 'multiply' ? (
+                        <ToolResultCollapsible result={result} toolName={toolName} />
                       ) : (
                         <pre>{JSON.stringify(result, null, 2)}</pre>
                       )}

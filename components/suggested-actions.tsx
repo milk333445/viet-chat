@@ -19,24 +19,24 @@ function PureSuggestedActions({
 }: SuggestedActionsProps) {
   const suggestedActions = [
     {
-      title: 'What are the advantages',
-      label: 'of using Next.js?',
-      action: 'What are the advantages of using Next.js?',
+      title: '查詢',
+      label: 'HPG 股票的即時價格',
+      action: '請問 HPG 股票目前的價格是多少？',
     },
     {
-      title: 'Write code to',
-      label: `demonstrate djikstra's algorithm`,
-      action: `Write code to demonstrate djikstra's algorithm`,
+      title: '查看',
+      label: 'FPT 股票近一週的趨勢',
+      action: '幫我看看 FPT 股票近一週的價格趨勢如何？',
     },
     {
-      title: 'Help me write an essay',
-      label: `about silicon valley`,
-      action: `Help me write an essay about silicon valley`,
+      title: '瞭解',
+      label: '越南 CPI 最近 30 天的變化',
+      action: '越南的 CPI 最近 30 天變化情況如何？',
     },
     {
-      title: 'What is the weather',
-      label: 'in San Francisco?',
-      action: 'What is the weather in San Francisco?',
+      title: '摘要',
+      label: '最近的越南通膨相關新聞',
+      action: '幫我摘要最近與越南通膨相關的新聞內容',
     },
   ];
 

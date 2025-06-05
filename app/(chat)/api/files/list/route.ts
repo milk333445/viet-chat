@@ -20,21 +20,30 @@ export async function GET() {
     type: getMimeType(file.filename),
     uploadedAt: file.createdAt?.getTime() ?? Date.now(),
     parsed: file.parsed,
-    summary: file.parseResult?.text
-        ? file.parseResult.text.slice(0, 50) + '...'
-        : null,
+    parseresult: file.parseResult?.text ?? null,
     }))
 
     return NextResponse.json({ files: fileList })
   } catch (error) {
-    console.error('❌ 讀取檔案清單錯誤:', error)
+    console.error('讀取檔案清單錯誤:', error)
     return NextResponse.json({ error: '查詢失敗' }, { status: 500 })
   }
 }
 
+const mimeMap: Record<string, string> = {
+  '.pdf': 'application/pdf',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.txt': 'text/plain',
+  '.md': 'text/markdown',
+  '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  '.csv': 'text/csv',
+};
+
 function getMimeType(filename: string): string {
-  if (filename.endsWith('.pdf')) return 'application/pdf'
-  if (filename.endsWith('.jpg') || filename.endsWith('.jpeg')) return 'image/jpeg'
-  if (filename.endsWith('.png')) return 'image/png'
-  return 'application/octet-stream'
+  const ext = Object.keys(mimeMap).find((ext) => filename.toLowerCase().endsWith(ext));
+  return ext ? mimeMap[ext] : 'application/octet-stream';
 }
+

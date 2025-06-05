@@ -71,7 +71,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
           </Link>
         </Button>
         <div className="text-xs text-muted-foreground px-4 py-2">
-          Powered by 富邦智能小幫手
+          Powered by Max
         </div>
         {/* {user && <SidebarUserNav user={user} />} */}
         </SidebarFooter>

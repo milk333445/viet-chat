@@ -39,12 +39,13 @@ const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
 // 新增檔案記錄
-export async function insertFile(userId: string, filename: string) {
+export async function insertFile(userId: string, filename: string, createdAt: Date) {
+  console.log('📂 新增檔案記錄:', { userId, filename, createdAt });
   await db.insert(file).values({
     userId,
     filename,
     parsed: false,
-    createdAt: new Date()
+    createdAt,
   });
 }
 

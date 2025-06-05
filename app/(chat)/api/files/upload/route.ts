@@ -6,20 +6,28 @@ import { z } from 'zod'
 import { auth } from '@/app/(auth)/auth'
 
 // 檔案驗證規則
+const ALLOWED_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'application/pdf',
+  'text/plain',
+  'text/markdown', // ✅ 新增支援 Markdown
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',       // .xlsx
+  'text/csv',
+];
+
+
 const FileSchema = z.object({
   file: z
     .instanceof(Blob)
     .refine((file) => file.size <= 5 * 1024 * 1024, {
       message: '檔案大小需小於 5MB',
     })
-    .refine(
-      (file) =>
-        ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'].includes(file.type),
-      {
-        message: '檔案格式僅限 JPEG, PNG, PDF',
-      }
-    ),
-})
+    .refine((file) => ALLOWED_TYPES.includes(file.type), {
+      message: '檔案格式僅支援 JPEG, PNG, PDF, TXT, MD, DOCX, XLSX, CSV',
+    }),
+});
 
 export async function POST(request: Request) {
   const session = await auth()
@@ -29,6 +37,7 @@ export async function POST(request: Request) {
 
   const userId = session.user.id
   console.log('📦 使用者 ID:', userId)
+  console.log('🔍 session 資訊:', session)
 
   if (!request.body) {
     return new Response('Request body is empty', { status: 400 })
@@ -37,10 +46,13 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
+    console.log('🔍 上傳檔案 MIME 類型:', file.type)
 
     if (!file) {
       return NextResponse.json({ error: '未提供檔案' }, { status: 400 })
     }
+
+    console.log('🔍 上傳檔案 MIME 類型:', file.type)
 
     const validatedFile = FileSchema.safeParse({ file })
     if (!validatedFile.success) {
@@ -57,16 +69,20 @@ export async function POST(request: Request) {
 
     const filePath = path.join(uploadDir, filename)
     await writeFile(filePath, buffer)
-    await insertFile(userId, filename)
+
+    const uploadedAt = new Date();
+    await insertFile(userId, filename, uploadedAt)
 
     const fileUrl = `/uploads/${userId}/${filename}`
 
     return NextResponse.json({
-      success: true,
-      url: fileUrl,
-      name: filename,
-      contentType: file.type,
-    })
+    success: true,
+    url: fileUrl,
+    name: filename,
+    contentType: file.type,
+    size: file.size,
+    uploadedAt: uploadedAt.toISOString(),
+  })
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json({ error: '處理檔案失敗' }, { status: 500 })

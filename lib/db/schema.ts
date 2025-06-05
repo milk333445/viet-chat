@@ -9,6 +9,7 @@ import {
   primaryKey,
   foreignKey,
   boolean,
+  jsonb
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('User', {
@@ -168,3 +169,17 @@ export const stream = pgTable(
 );
 
 export type Stream = InferSelectModel<typeof stream>;
+
+export const file = pgTable('File', {
+  id: uuid('id').primaryKey().defaultRandom().notNull(),
+  userId: uuid('userId').notNull().references(() => user.id),
+  filename: varchar('filename', { length: 128 }).notNull(),
+  parsed: boolean('parsed').default(false),
+  parseResult: jsonb('parse_result').$type<{
+    message?: string;
+    text: string;
+  }>(),
+  createdAt: timestamp('createdAt').defaultNow()
+})
+
+export type File = InferSelectModel<typeof file>

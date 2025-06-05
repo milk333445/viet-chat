@@ -24,6 +24,8 @@ import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 import { getWeather } from '@/lib/ai/tools/get-weather';
 import { multiply } from '@/lib/ai/tools/multiply';
+import { listUserUploadedFiles } from '@/lib/ai/tools/list-user-files';
+import { readUserFilesTool } from '@/lib/ai/tools/read-user-files';
 import { isProductionEnvironment } from '@/lib/constants';
 import { myProvider } from '@/lib/ai/providers';
 import { entitlementsByUserType } from '@/lib/ai/entitlements';
@@ -162,12 +164,16 @@ export async function POST(request: Request) {
                   'updateDocument',
                   'requestSuggestions',
                   'multiply',
+                  'listUserUploadedFiles',
+                  'readUserFilesTool'
                 ],
           experimental_transform: smoothStream({ chunking: 'word' }),
           experimental_generateMessageId: generateUUID,
           tools: {
             getWeather,
             multiply,
+            listUserUploadedFiles: listUserUploadedFiles({ session }),
+            readUserFilesTool: readUserFilesTool({ session }),
             createDocument: createDocument({ session, dataStream }),
             updateDocument: updateDocument({ session, dataStream }),
             requestSuggestions: requestSuggestions({

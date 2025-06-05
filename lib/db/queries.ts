@@ -27,6 +27,7 @@ import {
   type DBMessage,
   type Chat,
   stream,
+  file
 } from './schema';
 import type { ArtifactKind } from '@/components/artifact';
 import { generateUUID } from '../utils';
@@ -536,3 +537,4 @@ export async function getStreamIdsByChatId({ chatId }: { chatId: string }) {
     );
   }
 }
+

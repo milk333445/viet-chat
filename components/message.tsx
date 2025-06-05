@@ -20,6 +20,12 @@ import { DocumentPreview } from './document-preview';
 import { MessageReasoning } from './message-reasoning';
 import type { UseChatHelpers } from '@ai-sdk/react';
 import { ToolResultCollapsible } from './ToolResultCollapsible';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 const PurePreviewMessage = ({
   chatId,
@@ -191,6 +197,7 @@ const PurePreviewMessage = ({
 
                 if (state === 'result') {
                   const { result } = toolInvocation;
+                  const accordionTools = ['multiply', 'listUserUploadedFiles', 'readUserFilesTool']; 
 
                   return (
                     <div key={toolCallId}>
@@ -213,8 +220,15 @@ const PurePreviewMessage = ({
                           result={result}
                           isReadonly={isReadonly}
                         />
-                      ) : toolName === 'multiply' ? (
-                        <ToolResultCollapsible result={result} toolName={toolName} />
+                      ) : accordionTools.includes(toolName) ? (
+                        <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="tool-result">
+                          <AccordionTrigger className="text-sm">工具「{toolName}」的執行結果</AccordionTrigger>
+                          <AccordionContent>
+                            <Markdown>{sanitizeText(result)}</Markdown>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
                       ) : (
                         <pre>{JSON.stringify(result, null, 2)}</pre>
                       )}

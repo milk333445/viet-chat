@@ -1,0 +1,40 @@
+import { NextResponse } from 'next/server'
+import { auth } from '@/app/(auth)/auth'
+import { getUserFiles } from '@/lib/db/files'
+
+export async function GET() {
+  const session = await auth()
+  if (!session || !session.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const userId = session.user.id
+
+  try {
+    const rows = await getUserFiles(userId)
+
+    const fileList = rows.map(file => ({
+    name: file.filename,
+    url: `/uploads/${userId}/${file.filename}`,
+    size: 0, // 可選：用 fs.stat 拿實際大小
+    type: getMimeType(file.filename),
+    uploadedAt: file.createdAt?.getTime() ?? Date.now(),
+    parsed: file.parsed,
+    summary: file.parseResult?.text
+        ? file.parseResult.text.slice(0, 50) + '...'
+        : null,
+    }))
+
+    return NextResponse.json({ files: fileList })
+  } catch (error) {
+    console.error('❌ 讀取檔案清單錯誤:', error)
+    return NextResponse.json({ error: '查詢失敗' }, { status: 500 })
+  }
+}
+
+function getMimeType(filename: string): string {
+  if (filename.endsWith('.pdf')) return 'application/pdf'
+  if (filename.endsWith('.jpg') || filename.endsWith('.jpeg')) return 'image/jpeg'
+  if (filename.endsWith('.png')) return 'image/png'
+  return 'application/octet-stream'
+}

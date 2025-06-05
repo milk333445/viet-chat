@@ -3,7 +3,7 @@
 import type { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
 
-import { PlusIcon } from '@/components/icons';
+import { PlusIcon, UploadIcon } from '@/components/icons';
 import { SidebarHistory } from '@/components/sidebar-history';
 import { SidebarUserNav } from '@/components/sidebar-user-nav';
 import { Button } from '@/components/ui/button';
@@ -62,6 +62,14 @@ export function AppSidebar({ user }: { user: User | undefined }) {
         <SidebarHistory user={user} />
       </SidebarContent>
       <SidebarFooter>
+        <Button variant="ghost" className="w-full justify-start" asChild>
+          <Link href="/files">
+            <span className="w-4 h-4 mr-2 inline-block">
+              <UploadIcon size={16} />
+            </span>
+            檔案管理中心
+          </Link>
+        </Button>
         <div className="text-xs text-muted-foreground px-4 py-2">
           Powered by 富邦智能小幫手
         </div>

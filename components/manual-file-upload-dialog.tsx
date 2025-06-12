@@ -60,7 +60,7 @@ export function ManualFileUploadDialog({ onSuccess }: { onSuccess?: () => void }
         </DialogHeader>
         <div className="space-y-3">
           <Input
-            placeholder="請輸入檔名，例如 note.md"
+            placeholder="請輸入檔名，例如 note"
             value={filename}
             onChange={(e) => setFilename(e.target.value)}
           />

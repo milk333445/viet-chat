@@ -197,7 +197,13 @@ const PurePreviewMessage = ({
 
                 if (state === 'result') {
                   const { result } = toolInvocation;
-                  const accordionTools = ['multiply', 'listUserUploadedFiles', 'readUserFilesTool']; 
+                  const accordionTools = [
+                    'multiply', 
+                    'listUserUploadedFiles', 
+                    'readUserFilesTool', 
+                    'getStockPriceNow',
+                    'getStockPriceTrend',
+                    'getIntradayStockPerformance']; 
 
                   return (
                     <div key={toolCallId}>

@@ -203,7 +203,11 @@ const PurePreviewMessage = ({
                     'readUserFilesTool', 
                     'getStockPriceNow',
                     'getStockPriceTrend',
-                    'getIntradayStockPerformance']; 
+                    'getIntradayStockPerformance',
+                    'getFedMeetingData',
+                    'getVietMacrostatSummary',
+                    'getVietMacrostatTrend',
+                    'searchVietNews']; 
 
                   return (
                     <div key={toolCallId}>

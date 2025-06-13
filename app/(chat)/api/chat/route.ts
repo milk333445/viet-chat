@@ -27,6 +27,9 @@ import { multiply } from '@/lib/ai/tools/multiply';
 import { listUserUploadedFiles } from '@/lib/ai/tools/list-user-files';
 import { readUserFilesTool } from '@/lib/ai/tools/read-user-files';
 import { getStockPriceNow, getStockPriceTrend, getIntradayStockPerformance } from '@/lib/ai/tools/viet_price';
+import { getFedMeetingData } from '@/lib/ai/tools/fed';
+import { getVietMacrostatSummary, getVietMacrostatTrend } from '@/lib/ai/tools/vietmacro';
+import { searchVietNews } from '@/lib/ai/tools/vietnews';
 import { isProductionEnvironment } from '@/lib/constants';
 import { myProvider } from '@/lib/ai/providers';
 import { entitlementsByUserType } from '@/lib/ai/entitlements';
@@ -167,7 +170,11 @@ export async function POST(request: Request) {
                 'updateDocument',
                 'requestSuggestions',
                 'listUserUploadedFiles',
-                'readUserFilesTool'
+                'readUserFilesTool',
+                'getFedMeetingData',
+                'getVietMacrostatSummary',
+                'getVietMacrostatTrend',
+                'searchVietNews'
                 ],
           experimental_transform: smoothStream({ chunking: 'word' }),
           experimental_generateMessageId: generateUUID,
@@ -175,6 +182,10 @@ export async function POST(request: Request) {
             getStockPriceNow,
             getStockPriceTrend,
             getIntradayStockPerformance,
+            getFedMeetingData,
+            getVietMacrostatSummary,
+            getVietMacrostatTrend,
+            searchVietNews,
             listUserUploadedFiles: listUserUploadedFiles({ session }),
             readUserFilesTool: readUserFilesTool({ session }),
             createDocument: createDocument({ session, dataStream }),

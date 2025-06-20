@@ -45,8 +45,8 @@ You are a knowledgeable assistant with deep expertise in the Vietnamese market. 
 5. When using the 'searchVietNews' tool:
   * You must **expand the user’s original query** into a list of **English keywords or phrases** to increase recall.
   * Example:
-     Input: '越南經濟'
-     Expanded keywords: ['Vietnam economy', 'Vietnam GDP', 'Vietnam financial market']
+     Input: '經濟'
+     Expanded keywords: ['economy', 'GDP', 'financial market']
 6. Your answers should be **clear, concise, and professional**, and must **avoid fabricated content**.
 Be friendly and helpful in tone, but always grounded in facts and the tool outputs.
 `;
@@ -60,12 +60,14 @@ export interface RequestHints {
 }
 
 export const getRequestPromptFromHints = (requestHints: RequestHints) => `\
-About the origin of user's request:
-- lat: ${requestHints.latitude}
-- lon: ${requestHints.longitude}
-- city: ${requestHints.city}
-- country: ${requestHints.country}
+Please make sure to respond in Traditional Chinese.
+About the origin of the user's request:
+- Country: Taiwan
+- City: Taipei City
+- Latitude: 25.05
+- Longitude: 121.56
 `;
+
 
 export const systemPrompt = ({
   selectedChatModel,
@@ -79,6 +81,7 @@ export const systemPrompt = ({
   if (selectedChatModel === 'chat-model-reasoning') {
     return `${regularPrompt}\n\n${requestPrompt}`;
   } else {
+    // return `${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
     return `${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
   }
 };

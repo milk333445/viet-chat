@@ -10,8 +10,11 @@ interface ListFilesToolProps {
 export const listUserUploadedFiles = ({ session }: ListFilesToolProps) =>
   tool({
     description: 'List all uploaded files for the current user',
-    parameters: z.object({}), // 無參數
+    parameters: z.object({
+      confirm: z.literal('yes').describe("請輸入 'yes' 以確認執行列出使用者上傳檔案的操作"),
+    }),
     execute: async () => {
+      console.log(`user: ${session}`);
       if (!session?.user?.id) {
         return {
           error: 'User not authenticated.',

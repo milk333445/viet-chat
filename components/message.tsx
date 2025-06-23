@@ -160,6 +160,18 @@ const PurePreviewMessage = ({
                 }
               }
 
+              const accordionTools = [
+              'multiply', 
+              'listUserUploadedFiles', 
+              'readUserFilesTool', 
+              'getStockPriceNow',
+              'getStockPriceTrend',
+              'getIntradayStockPerformance',
+              'getFedMeetingData',
+              'getVietMacrostatSummary',
+              'getVietMacrostatTrend',
+              'searchVietNews'];
+
               if (type === 'tool-invocation') {
                 const { toolInvocation } = part;
                 const { toolName, toolCallId, state } = toolInvocation;
@@ -190,6 +202,15 @@ const PurePreviewMessage = ({
                           args={args}
                           isReadonly={isReadonly}
                         />
+                      ) : accordionTools.includes(toolName) ? (
+                        <Accordion type="single" collapsible className="w-full">
+                          <AccordionItem value="tool-call">
+                            <AccordionTrigger className="text-sm">工具「{toolName}」執行中參數</AccordionTrigger>
+                            <AccordionContent>
+                              <pre>{JSON.stringify(args, null, 2)}</pre>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
                       ) : null}
                     </div>
                   );
@@ -197,18 +218,6 @@ const PurePreviewMessage = ({
 
                 if (state === 'result') {
                   const { result } = toolInvocation;
-                  const accordionTools = [
-                    'multiply', 
-                    'listUserUploadedFiles', 
-                    'readUserFilesTool', 
-                    'getStockPriceNow',
-                    'getStockPriceTrend',
-                    'getIntradayStockPerformance',
-                    'getFedMeetingData',
-                    'getVietMacrostatSummary',
-                    'getVietMacrostatTrend',
-                    'searchVietNews']; 
-
                   return (
                     <div key={toolCallId}>
                       {toolName === 'getWeather' ? (

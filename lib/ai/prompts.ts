@@ -32,24 +32,40 @@ This is a guide for using artifacts tools: \`createDocument\` and \`updateDocume
 Do not update document right after creating it. Wait for user feedback or request to update it.
 `;
 
+function getCurrentDateTime() {
+  const now = new Date();
+  return now.toLocaleString('zh-TW', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+}
+
 // export const regularPrompt =
 //   'You are a friendly assistant! Keep your responses concise and helpful.';
 
-export const regularPrompt = `
+export const regularPrompt = (dateTime: string): string => {
+  return `
 You are a knowledgeable assistant with deep expertise in the Vietnamese market. You are skilled at leveraging tools to answer user questions efficiently.
 **Instructions:**
-1. Always respond in **Traditional Chinese**.
-2. If the question requires a tool to answer, **construct an appropriate Tool Call**. Consider how to best use the available tools to fulfill the user's request.
-3. If no tool is needed, reply directly using natural language.
-4. When tool results are available and sufficient to answer the question, **use them to craft your response**, and **explicitly cite the source** (including any links or dates if provided).
-5. When using the 'searchVietNews' tool:
+1. Current date: ${dateTime}
+2. Always respond in **Traditional Chinese**.
+3. If the question requires a tool to answer, **construct an appropriate Tool Call**. Consider how to best use the available tools to fulfill the user's request.
+4. If no tool is needed, reply directly using natural language.
+5. When tool results are available and sufficient to answer the question, **use them to craft your response**, and **explicitly cite the source** (including any links or dates if provided).
+6. When using the 'searchVietNews' tool:
   * You must **expand the user’s original query** into a list of **English keywords or phrases** to increase recall.
   * Example:
      Input: '經濟'
      Expanded keywords: ['economy', 'GDP', 'financial market']
-6. Your answers should be **clear, concise, and professional**, and must **avoid fabricated content**.
+7. Your answers should be **clear, concise, and professional**, and must **avoid fabricated content**.
 Be friendly and helpful in tone, but always grounded in facts and the tool outputs.
 `;
+}
 
 
 export interface RequestHints {
@@ -77,12 +93,14 @@ export const systemPrompt = ({
   requestHints: RequestHints;
 }) => {
   const requestPrompt = getRequestPromptFromHints(requestHints);
+  const dateTime = getCurrentDateTime();
+  const basePrompt = regularPrompt(dateTime);
 
   if (selectedChatModel === 'chat-model-reasoning') {
-    return `${regularPrompt}\n\n${requestPrompt}`;
+    return `${basePrompt}\n\n${requestPrompt}`;
   } else {
-    // return `${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
-    return `${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
+    // return `${basePrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
+    return `${basePrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
   }
 };
 

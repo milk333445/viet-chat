@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { HelpDialog } from './HelpDialog';
 
 export function AppSidebar({ user }: { user: User | undefined }) {
   const router = useRouter();
@@ -64,12 +65,13 @@ export function AppSidebar({ user }: { user: User | undefined }) {
       <SidebarFooter>
         <Button variant="ghost" className="w-full justify-start" asChild>
           <Link href="/files">
-            <span className="w-4 h-4 mr-2 inline-block">
+            <span className="size-4 mr-2 inline-block">
               <UploadIcon size={16} />
             </span>
             檔案管理中心
           </Link>
         </Button>
+        <HelpDialog />
         <div className="text-xs text-muted-foreground px-4 py-2">
           Powered by Max
         </div>

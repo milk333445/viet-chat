@@ -11,14 +11,12 @@ export const getVietMacrostatSummary = tool({
       .number()
       .int()
       .min(0)
-      .max(365)
       .default(7)
       .describe("How many days ago to start querying from. Default is 7."),
     end_days_ago: z
       .number()
       .int()
       .min(0)
-      .max(365)
       .default(0)
       .describe("How many days ago to end querying at. Default is 0 (today)."),
     keywords: z

@@ -15,7 +15,6 @@ export const searchVietNews = tool({
       .number()
       .int()
       .min(1)
-      .max(30)
       .default(7)
       .describe("Number of past days from today to include in the search range. Default is 7 days."),
   }),

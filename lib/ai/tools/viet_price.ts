@@ -10,6 +10,7 @@ export const getStockPriceNow = tool({
     }), 
     execute: async ( { stock_name } ) => {
       try {
+        console.log(`Fetching real-time price for stock: ${stock_name} ${fastApiBase}/api/viet/price/now`);
         const response = await fetch(`${fastApiBase}/api/viet/price/now`, {
           method: "POST",
           headers: {
@@ -39,7 +40,6 @@ export const getStockPriceTrend = tool({
     .number()
     .int()
     .min(1)
-    .max(90)
     .default(7)
     .describe("Number of recent days to analyze. Default is 7."),
   }), 

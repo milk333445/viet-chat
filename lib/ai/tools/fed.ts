@@ -11,14 +11,12 @@ export const getFedMeetingData = tool({
       .number()
       .int()
       .min(0)
-      .max(365)
       .default(90)
       .describe("Number of days ago to start searching from (default 90)."),
     end_days_ago: z
       .number()
       .int()
       .min(0)
-      .max(365)
       .default(0)
       .describe("Number of days ago to end searching (default 0)."),
   }), 

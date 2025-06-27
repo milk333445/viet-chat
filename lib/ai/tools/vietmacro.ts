@@ -52,12 +52,12 @@ export const getVietMacrostatSummary = tool({
 });
 
 export const getVietMacrostatTrend = tool({
-  description: "Query the trend of a specific Vietnamese macroeconomic indicator over a date range.",
+  description: "Query the trend of specific Vietnamese macroeconomic indicators over a date range.",
   parameters: z.object({
-    keyword: z
-      .string()
+    keywords: z
+      .array(z.string().min(1))
       .min(1)
-      .describe("The economic indicator to search for. Supports common aliases like 'CPI', 'GDP', etc."),
+      .describe("A list of macroeconomic indicator keywords to search for. Example: ['GDP', 'Inflation']"),
     start_days_ago: z
       .number()
       .int()
@@ -73,18 +73,15 @@ export const getVietMacrostatTrend = tool({
       .default(0)
       .describe("How many days ago to end at. Defaults to 0 (today)."),
   }),
-  execute: async ({ keyword, start_days_ago, end_days_ago }) => {
+  execute: async ({ keywords, start_days_ago, end_days_ago }) => {
     try {
-      const response = await fetch(
-        `${fastApiBase}/api/viet/macro/trend`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ keyword, start_days_ago, end_days_ago }),
-        }
-      );
+      const response = await fetch(`${fastApiBase}/api/viet/macro/trend`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ keywords, start_days_ago, end_days_ago }),
+      });
 
       const data = await response.json();
 

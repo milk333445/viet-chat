@@ -30,6 +30,8 @@ import { FedMeetingSheet } from './FedMeetingSheet';
 import { NewsSummarySheet } from './NewsSummarySheet';
 import { StockTrendSheet } from './StockTrendSheet';
 import { IntradayTrendSheet } from './IntradayTrendSheet';
+import { VietMacroSheet } from './VietMacroSheet';
+import { VietMacroTrendSheet } from './VietMacroTrendSheet';
 
 const PurePreviewMessage = ({
   chatId,
@@ -251,6 +253,10 @@ const PurePreviewMessage = ({
                         <StockTrendSheet summary={result} />
                       ) : toolName === 'getIntradayStockPerformance' ? (
                         <IntradayTrendSheet summary={result} />
+                      ) : toolName === 'getVietMacrostatSummary' ? (
+                        <VietMacroSheet summary={result} />
+                      ) : toolName === 'getVietMacrostatTrend' ? (
+                        <VietMacroTrendSheet summary={result} />
                       ) : accordionTools.includes(toolName) ? (
                         <Accordion type="single" collapsible className="w-full">
                         <AccordionItem value="tool-result">

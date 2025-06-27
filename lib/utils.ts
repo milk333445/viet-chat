@@ -90,6 +90,36 @@ export function sanitizeText(text: string) {
   return text.replace('<has_function_call>', '');
 }
 
+type MacroTrendEntry = {
+  title: string
+  values: {
+    date: string
+    value: number | null
+    unit: string
+  }[]
+}
+
+type ParsedMacroTrend = {
+  trends: MacroTrendEntry[]
+  rawText: string
+  isStructured: boolean
+}
+
+type VietMacroIndicator = {
+  title: string
+  value: string
+  unit: string
+  date: string
+}
+
+type VietMacroSummary = {
+  startDate: string
+  endDate: string
+  indicators: VietMacroIndicator[]
+  rawText: string
+  isStructured: boolean
+}
+
 type IntradayStockData = {
   time: string
   price: number
@@ -270,5 +300,86 @@ export function parseIntradayTrendSummary(summary: string): IntradayTrend {
     data,
     rawText,
     isStructured: data.length > 0,
+  }
+}
+
+export function parseVietMacroSummary(summary: string): VietMacroSummary {
+  const rawText = summary.trim()
+  const headerMatch = rawText.match(
+    /^Vietnam Macroeconomic Data from (\d{4}-\d{2}-\d{2}) to (\d{4}-\d{2}-\d{2}):/
+  )
+
+  if (!headerMatch) {
+    return {
+      startDate: '',
+      endDate: '',
+      indicators: [],
+      rawText,
+      isStructured: false,
+    }
+  }
+
+  const [, startDate, endDate] = headerMatch
+  const lines = rawText.split('\n').slice(1)
+
+  const indicators: VietMacroIndicator[] = []
+
+  for (const line of lines) {
+    const match = line.match(
+      /^-\s*(.+?):\s*([-\d.,]+)?\s*(.*?)\s*\(as of (\d{4}-\d{2}-\d{2})\)/
+    )
+    if (match) {
+      const [, title, value = '', unit = '', date] = match
+      indicators.push({ title: title.trim(), value: value.trim(), unit: unit.trim(), date })
+    }
+  }
+
+  return {
+    startDate,
+    endDate,
+    indicators,
+    rawText,
+    isStructured: indicators.length > 0,
+  }
+}
+
+export function parseVietMacroTrend(summary: string): ParsedMacroTrend {
+  const lines = summary.trim().split('\n')
+  const trends: MacroTrendEntry[] = []
+
+  let currentTitle = ''
+  let currentValues: MacroTrendEntry['values'] = []
+
+  const trendHeaderPattern = /^Vietnam Macroeconomic Trends/i
+  const titlePattern = /^(.+):$/
+  const valueLinePattern = /^\s*-\s*(\d{4}-\d{2}-\d{2}):\s*([\d.,]+)\s*(.+)$/
+
+  const isStructured = trendHeaderPattern.test(summary)
+
+  for (const line of lines) {
+    const titleMatch = line.match(titlePattern)
+    const valueMatch = line.match(valueLinePattern)
+
+    if (titleMatch) {
+      if (currentTitle && currentValues.length > 0) {
+        trends.push({ title: currentTitle, values: currentValues })
+      }
+      currentTitle = titleMatch[1].trim()
+      currentValues = []
+    } else if (valueMatch) {
+      const [, date, valueStr, unit] = valueMatch
+      const value = parseFloat(valueStr.replace(/,/g, ''))
+      currentValues.push({ date, value: isNaN(value) ? null : value, unit: unit.trim() })
+    }
+  }
+
+  if (currentTitle && currentValues.length > 0) {
+    trends.push({ title: currentTitle, values: currentValues })
+  }
+
+  return {
+    trends,
+    rawText: summary,
+    isStructured: isStructured && trends.length > 0,
   }
 }

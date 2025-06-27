@@ -89,7 +89,7 @@ export function IntradayTrendSheet({ summary, triggerText = "查看即時趨勢"
                     <Line
                       type="monotone"
                       dataKey="price"
-                      stroke="#22c55e"
+                      stroke="#2563eb"
                       strokeWidth={2}
                       dot={true}
                     />

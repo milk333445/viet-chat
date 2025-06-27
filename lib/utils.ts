@@ -89,3 +89,186 @@ export function getTrailingMessageId({
 export function sanitizeText(text: string) {
   return text.replace('<has_function_call>', '');
 }
+
+type IntradayStockData = {
+  time: string
+  price: number
+  change: number | null
+}
+
+type IntradayTrend = {
+  stockName: string
+  date: string
+  data: IntradayStockData[]
+  rawText: string
+  isStructured: boolean
+}
+
+type StockTrendPoint = {
+  date: string         // yyyy-mm-dd
+  price: number        // 價格 (數值)
+  change: number       // 漲跌百分比
+}
+
+type ParsedStockTrend = {
+  stockName: string
+  data: StockTrendPoint[]
+  rawText: string
+  isStructured: boolean
+}
+
+type NewsArticle = {
+  title: string
+  time: string
+  category: string
+  rank: number
+  content: string
+  link: string
+}
+
+type ParsedNewsResult = {
+  articles: NewsArticle[]
+  rawText: string
+  isStructured: boolean
+}
+
+type FedMeeting = {
+  meetingDate: string;
+  releaseDate: string;
+  statement: string;
+  statementLink: string;
+  minutesLink: string;
+};
+
+type ParseFedResult = {
+  meetings: FedMeeting[];
+  rawText: string;
+  isStructured: boolean;
+};
+
+export function parseFedSummary(summary: string): ParseFedResult {
+  const entries = summary
+    .split('---')
+    .map(e => e.trim())
+    .filter(e => e.startsWith('**'));
+
+  const meetings: FedMeeting[] = entries.map(entry => {
+    const meetingDateMatch = entry.match(/\*\*(\d{4}-\d{2}-\d{2})\*\*/);
+    const releaseDateMatch = entry.match(/\(Released on (\d{4}-\d{2}-\d{2})\)/);
+    const statementMatch = entry.match(/- \*\*Statement\*\*:([\s\S]+?)(?=\n- \[Full Statement\]|\n- \[Full Minutes\])/)
+    const statementLinkMatch = entry.match(/\[Full Statement\]\((.+?)\)/);
+    const minutesLinkMatch = entry.match(/\[Full Minutes\]\((.+?)\)/);
+
+    return {
+      meetingDate: meetingDateMatch?.[1] || '',
+      releaseDate: releaseDateMatch?.[1] || '',
+      statement: statementMatch?.[1] || '',
+      statementLink: statementLinkMatch?.[1] || '',
+      minutesLink: minutesLinkMatch?.[1] || ''
+    };
+  });
+
+  return {
+    meetings,
+    rawText: summary,
+    isStructured: meetings.length > 0
+  };
+}
+
+export function parseNewsSummary(summary: string): ParsedNewsResult {
+  const blocks = summary.split('---')
+    .map(block => block.trim())
+    .filter(block => block.includes('[title]'))
+
+  const articles: NewsArticle[] = blocks.map(block => {
+    const titleMatch = block.match(/\[title\]\s+\*\*(.+?)\*\*/)
+    const timeMatch = block.match(/\[time\]\s+(.+)/)
+    const categoryMatch = block.match(/\[category\]\s+(.+)/)
+    const rankMatch = block.match(/\[rank\]\s+([\d.]+)/)
+    const contentMatch = block.match(/\[content\]\s+([\s\S]+?)(?=\n- \[Link\])/)
+    const linkMatch = block.match(/\[Link\]\s+(.+)/)
+
+    return {
+      title: titleMatch?.[1] || '',
+      time: timeMatch?.[1] || '',
+      category: categoryMatch?.[1] || '',
+      rank: rankMatch ? Number.parseFloat(rankMatch[1]) : 0,
+      content: contentMatch?.[1]?.trim() || '',
+      link: linkMatch?.[1] || ''
+    }
+  })
+
+  return {
+    articles,
+    rawText: summary,
+    isStructured: articles.length > 0
+  }
+}
+
+
+export function parseStockTrendSummary(summary: string): ParsedStockTrend {
+  console.log('Parsing stock trend summary:', summary)
+  const lines = summary.trim().split('\n')
+
+  const stockLine = lines.find(line => line.includes("股票趨勢過去"))
+  const stockMatch = stockLine?.match(/^(\S+)\s股票趨勢/) // 提取 HPG 之類的
+
+  const stockName = stockMatch?.[1] || ''
+  const data: StockTrendPoint[] = []
+
+  for (const line of lines) {
+    const match = line.match(/^(\d{4}-\d{2}-\d{2}):\s+([\d.]+)\s+VND\s+\(([-\d.]+)%\)/)
+    if (match) {
+      const [, date, priceStr, changeStr] = match
+      data.push({
+        date,
+        price: Number.parseFloat(priceStr),
+        change: Number.parseFloat(changeStr),
+      })
+    }
+  }
+  console.log('Parsed stock data:', data)
+  return {
+    stockName,
+    data,
+    rawText: summary,
+    isStructured: data.length > 0,
+  }
+}
+
+export function parseIntradayTrendSummary(summary: string): IntradayTrend {
+  const rawText = summary.trim()
+  const headerMatch = rawText.match(/^Intraday hourly trend for (\w+) on (\d{4}-\d{2}-\d{2}):/)
+
+  if (!headerMatch) {
+    return {
+      stockName: '',
+      date: '',
+      data: [],
+      rawText,
+      isStructured: false,
+    }
+  }
+
+  const [, stockName, date] = headerMatch
+  const lines = rawText.split('\n').slice(1) // skip header line
+  const data: IntradayTrend["data"] = []
+
+  for (const line of lines) {
+    const match = line.match(/[-*]?\s*(\d{2}:\d{2})：([\d.,]+) VND（([^)]+)）/)
+    if (match) {
+      const [, time, priceStr, changeStr] = match
+      const price = Number.parseFloat(priceStr.replace(/,/g, ''))
+      const change = changeStr === '—' ? null : Number.parseFloat(changeStr.replace('%', ''))
+      data.push({ time, price, change })
+    }
+  }
+
+  return {
+    stockName,
+    date,
+    data,
+    rawText,
+    isStructured: data.length > 0,
+  }
+}

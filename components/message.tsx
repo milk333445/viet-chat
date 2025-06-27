@@ -12,7 +12,7 @@ import { MessageActions } from './message-actions';
 import { PreviewAttachment } from './preview-attachment';
 import { Weather } from './weather';
 import equal from 'fast-deep-equal';
-import { cn, sanitizeText } from '@/lib/utils';
+import { cn, sanitizeText, parseFedSummary } from '@/lib/utils';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { MessageEditor } from './message-editor';
@@ -26,6 +26,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { FedMeetingSheet } from './FedMeetingSheet';
+import { NewsSummarySheet } from './NewsSummarySheet';
+import { StockTrendSheet } from './StockTrendSheet';
+import { IntradayTrendSheet } from './IntradayTrendSheet';
 
 const PurePreviewMessage = ({
   chatId,
@@ -239,6 +243,14 @@ const PurePreviewMessage = ({
                           result={result}
                           isReadonly={isReadonly}
                         />
+                      ) : toolName === 'getFedMeetingData' ? (
+                        <FedMeetingSheet summary={result} />
+                      ) : toolName === 'searchVietNews' ? (
+                        <NewsSummarySheet summary={result} />
+                      ) : toolName === 'getStockPriceTrend' ? (
+                        <StockTrendSheet summary={result} />
+                      ) : toolName === 'getIntradayStockPerformance' ? (
+                        <IntradayTrendSheet summary={result} />
                       ) : accordionTools.includes(toolName) ? (
                         <Accordion type="single" collapsible className="w-full">
                         <AccordionItem value="tool-result">

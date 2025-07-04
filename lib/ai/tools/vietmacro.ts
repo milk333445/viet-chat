@@ -52,7 +52,7 @@ export const getVietMacrostatSummary = tool({
 });
 
 export const getVietMacrostatTrend = tool({
-  description: "Query the trend of specific Vietnamese macroeconomic indicators over a date range.",
+  description: "Query the trend of a list of macroeconomic indicators over a date range.",
   parameters: z.object({
     keywords: z
       .array(z.string().min(1))

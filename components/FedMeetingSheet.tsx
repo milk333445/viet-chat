@@ -57,7 +57,7 @@ export function FedMeetingSheet({ summary, triggerText = "查看 Fed 會議紀�
             meetings.map((m, i) => (
               <Card key={i}>
                 <CardHeader>
-                  <CardTitle>📅 會議日期：{m.meetingDate}</CardTitle>
+                  <CardTitle>會議日期：{m.meetingDate}</CardTitle>
                   <CardDescription>公布日期：{m.releaseDate}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm leading-relaxed">

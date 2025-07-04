@@ -21,6 +21,7 @@ export function FileUpload({ onUpload }: FileUploadProps) {
       onUpload(file)  // ✅ 正確地呼叫 props 中的 callback
       toast.success('檔案已選擇')
     }
+    e.target.value = ''
   }
 
   return (

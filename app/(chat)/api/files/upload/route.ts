@@ -4,6 +4,8 @@ import path from 'path'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { auth } from '@/app/(auth)/auth'
+import { stat } from 'fs/promises'
+
 
 // 檔案驗證規則
 const ALLOWED_TYPES = [
@@ -15,6 +17,7 @@ const ALLOWED_TYPES = [
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',       // .xlsx
   'text/csv',
+  'application/msword', 
 ];
 
 
@@ -53,6 +56,7 @@ export async function POST(request: Request) {
     }
 
     console.log('🔍 上傳檔案 MIME 類型:', file.type)
+    console.log('🔍 上傳檔案大小:', file.size)
 
     const validatedFile = FileSchema.safeParse({ file })
     if (!validatedFile.success) {
@@ -68,6 +72,14 @@ export async function POST(request: Request) {
     await mkdir(uploadDir, { recursive: true })
 
     const filePath = path.join(uploadDir, filename)
+
+    try {
+      await stat(filePath)
+      return NextResponse.json({ error: `檔案「${filename}」已存在，請勿重複上傳` }, { status: 400 })
+    } catch {
+
+    }
+
     await writeFile(filePath, buffer)
 
     const uploadedAt = new Date();

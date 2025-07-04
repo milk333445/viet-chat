@@ -206,7 +206,7 @@ export function parseFedSummary(summary: string): ParseFedResult {
 }
 
 export function parseNewsSummary(summary: string): ParsedNewsResult {
-  const blocks = summary.split('---')
+  const blocks = summary.split('===')
     .map(block => block.trim())
     .filter(block => block.includes('[title]'))
 

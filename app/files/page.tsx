@@ -104,14 +104,24 @@ export default function FileManagerPage() {
             })
               .then(res => res.json())
               .then(data => {
+                console.log('上傳回傳資料:', data)
+                if (data.error) {
+                  toast.error(data.error)
+                  return
+                }
                 if (!data.url || !data.name) {
                   toast.error('回傳資料不完整')
                   return
                 }
-
                 setFiles(prev => {
-                  const alreadyExists = prev.some(f => f.url === data.url)
-                  if (alreadyExists) return prev
+                  const alreadyExists = prev.some(
+                    f => f.name === data.name
+                  )
+                  if (alreadyExists) {
+                    toast.error(`檔案「${data.name}」已存在，請勿重複上傳`)
+                    return prev
+                  }
+
                   return [
                     ...prev,
                     {

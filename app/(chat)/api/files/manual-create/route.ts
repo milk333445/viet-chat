@@ -4,6 +4,7 @@ import path from 'path'
 import { z } from 'zod'
 import { auth } from '@/app/(auth)/auth'
 import { insertFile } from '@/lib/db/files'
+import { stat } from 'fs/promises'
 
 const schema = z.object({
   filename: z.string().min(1),
@@ -36,6 +37,14 @@ export async function POST(req: Request) {
     await mkdir(uploadDir, { recursive: true })
 
     const filePath = path.join(uploadDir, filename)
+
+    try {
+          await stat(filePath)
+          return NextResponse.json({ error: `檔案「${filename}」已存在，請勿重複上傳` }, { status: 400 })
+        } catch {
+    
+        }
+
     await writeFile(filePath, content, 'utf-8')
 
     const uploadedAt = new Date()

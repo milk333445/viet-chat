@@ -29,6 +29,11 @@ function PureSuggestedActions({
       action: '幫我看看 FPT 股票近一週的價格趨勢如何？',
     },
     {
+      title: '查看',
+      label: 'FPT 股票日內價格變化',
+      action: '幫我看看 FPT 今年7月2日日內交易價格變化?',
+    },
+    {
       title: '瞭解',
       label: '聯準會最近 30 天的發布內容',
       action: '聯準會最近 30 天有發布過什麼重要的內容嗎？請幫我整理一下。',
@@ -36,7 +41,22 @@ function PureSuggestedActions({
     {
       title: '摘要',
       label: '最近的利率相關新聞',
-      action: '幫我摘要最近與利率相關的新聞內容，並幫我整理成一份報告。',
+      action: '幫我摘要最近與利率相關的新聞內容，要標記時間與來源連結。',
+    },
+    {
+      title: '越南總體數據',
+      label: '越南總體數據查詢',
+      action: '幫我查過去半年越南公布總經數據摘要。',
+    },
+    {
+      title: '越南總體個別數據',
+      label: '越南總體個別數據查詢',
+      action: '幫我查過去半年越南公布CPI跟FDI趨勢變化。',
+    },
+    {
+      title: '檔案',
+      label: '檔案詢問摘要',
+      action: '幫我摘要我上傳的檔案內容，並且寫成一份報告。',
     },
   ];
 

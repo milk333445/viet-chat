@@ -105,7 +105,7 @@ export function MacroTrendCard({ title, values }: MacroTrendCardProps) {
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={filteredValues}>
-              <CartesianGrid strokeDasharray="3 3" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis
                 dataKey="date"
                 axisLine={false}
@@ -127,7 +127,7 @@ export function MacroTrendCard({ title, values }: MacroTrendCardProps) {
                 dataKey="value"
                 stroke="#2563eb"
                 strokeWidth={2}
-                dot={false}
+                dot={true}
               />
             </LineChart>
           </ResponsiveContainer>

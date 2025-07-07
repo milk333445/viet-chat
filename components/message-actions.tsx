@@ -16,6 +16,36 @@ import { memo } from 'react';
 import equal from 'fast-deep-equal';
 import { toast } from 'sonner';
 
+function copyTextToClipboard(text: string) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text);
+  } else {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    return new Promise<void>((resolve, reject) => {
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          resolve();
+        } else {
+          reject(new Error('Fallback copy failed'));
+        }
+      } catch (err) {
+        reject(err);
+      } finally {
+        document.body.removeChild(textarea);
+      }
+    });
+  }
+}
+
+
 export function PureMessageActions({
   chatId,
   message,
@@ -53,8 +83,13 @@ export function PureMessageActions({
                   return;
                 }
 
-                await copyToClipboard(textFromParts);
-                toast.success('Copied to clipboard!');
+                try {
+                  await copyTextToClipboard(textFromParts);
+                  toast.success('Copied to clipboard!');
+                } catch (err) {
+                  toast.error('Failed to copy text.');
+                  console.error(err);
+                }
               }}
             >
               <CopyIcon />

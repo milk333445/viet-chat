@@ -146,8 +146,34 @@ export const textArtifact = new Artifact<'text', TextArtifactMetadata>({
       icon: <CopyIcon size={18} />,
       description: 'Copy to clipboard',
       onClick: ({ content }) => {
-        navigator.clipboard.writeText(content);
-        toast.success('Copied to clipboard!');
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(content)
+            .then(() => toast.success('Copied to clipboard!'))
+            .catch(() => {
+              fallbackCopy(content);
+              toast.success('Copied using fallback!');
+            });
+        } else {
+          fallbackCopy(content);
+          toast.success('Copied using fallback!');
+        }
+
+        function fallbackCopy(text: string) {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed'; // 防止跳動
+          textarea.style.left = '-9999px';
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          try {
+            document.execCommand('copy');
+          } catch (err) {
+            toast.error('Copy failed');
+            console.error('Fallback copy failed', err);
+          }
+          document.body.removeChild(textarea);
+        }
       },
     },
   ],

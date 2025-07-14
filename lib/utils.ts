@@ -176,6 +176,42 @@ type ParseFedResult = {
   isStructured: boolean;
 };
 
+export type ParsedWebArticle = {
+  url: string;
+};
+
+export function parseWebSearchResult(rawText: string): {
+  urls: ParsedWebArticle[];
+  rawText: string;
+  isStructured: boolean;
+} {
+  const markdownLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+  const fallbackLineRegex = /\[\d+\]\s*Source:\s*(https?:\/\/\S+)\s*Title:\s*(.+?)\s*(Published|Text):/g;
+
+  const urls: ParsedWebArticle[] = [];
+
+  // 1. 優先解析 markdown link
+  const mdMatches = [...rawText.matchAll(markdownLinkRegex)];
+  if (mdMatches.length > 0) {
+    for (const match of mdMatches) {
+      urls.push({ url: match[2].trim() });
+    }
+  } else {
+    // 2. fallback：解析原始格式的 "Source: xxx Title: yyy"
+    const fallbackMatches = [...rawText.matchAll(fallbackLineRegex)];
+    for (const match of fallbackMatches) {
+      urls.push({ url: match[1].trim() });
+    }
+  }
+
+  return {
+    urls,
+    rawText,
+    isStructured: urls.length > 0,
+  };
+}
+
+
 export function parseFedSummary(summary: string): ParseFedResult {
   const entries = summary
     .split('---')

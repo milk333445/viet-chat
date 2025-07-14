@@ -32,6 +32,7 @@ import { StockTrendSheet } from './StockTrendSheet';
 import { IntradayTrendSheet } from './IntradayTrendSheet';
 import { VietMacroSheet } from './VietMacroSheet';
 import { VietMacroTrendSheet } from './VietMacroTrendSheet';
+import { WebSearchSheet } from './WebSearchSheet';
 
 const PurePreviewMessage = ({
   chatId,
@@ -176,7 +177,8 @@ const PurePreviewMessage = ({
               'getFedMeetingData',
               'getVietMacrostatSummary',
               'getVietMacrostatTrend',
-              'searchVietNews'];
+              'searchVietNews',
+              'searchWebTool'];
 
               if (type === 'tool-invocation') {
                 const { toolInvocation } = part;
@@ -255,6 +257,8 @@ const PurePreviewMessage = ({
                         <IntradayTrendSheet summary={result} />
                       ) : toolName === 'getVietMacrostatSummary' ? (
                         <VietMacroSheet summary={result} />
+                      ) : toolName === 'searchWebTool' ? (
+                        <WebSearchSheet resultText={result} />
                       ) : toolName === 'getVietMacrostatTrend' ? (
                         <VietMacroTrendSheet summary={result} />
                       ) : accordionTools.includes(toolName) ? (

@@ -27,6 +27,15 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
 import { useScrollToBottom } from '@/hooks/use-scroll-to-bottom';
 import type { VisibilityType } from './visibility-selector';
+import { ModeToggle } from './switch-inpumode';
+
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 
 function PureMultimodalInput({
   chatId,
@@ -108,13 +117,18 @@ function PureMultimodalInput({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
-
+  const [inputMode, setInputMode] = useState<'agent' | 'normal' | 'deep_research'>('normal');
   const submitForm = useCallback(() => {
     window.history.replaceState({}, '', `/chat/${chatId}`);
 
-    handleSubmit()
+    console.log(`[submitForm] inputMode: ${inputMode}`);
 
-    // setAttachments([]);
+    handleSubmit(undefined, {
+      body: {
+        input_mode: inputMode,
+      },
+    });
+
     setLocalStorageInput('');
     resetHeight();
 
@@ -122,13 +136,15 @@ function PureMultimodalInput({
       textareaRef.current?.focus();
     }
   }, [
+    inputMode,
     attachments,
     handleSubmit,
-    setAttachments,
     setLocalStorageInput,
     width,
     chatId,
   ]);
+
+
 
   const uploadFile = async (file: File) => {
     const formData = new FormData();
@@ -259,6 +275,23 @@ function PureMultimodalInput({
           ))}
         </div>
       )}
+
+      {/* <div className="flex items-center gap-2">
+        <label htmlFor="input-mode" className="text-sm text-muted-foreground">模式：</label>
+        <Select
+          value={inputMode}
+          onValueChange={(value: 'deep_research' | 'normal') => setInputMode(value)}
+        >
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="選擇模式" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="normal">一般對話</SelectItem>
+            <SelectItem value="deep_research">深度檢索</SelectItem>
+          </SelectContent>
+        </Select>
+      </div> */}
+      <ModeToggle inputMode={inputMode} setInputMode={setInputMode} />
 
       <Textarea
         data-testid="multimodal-input"

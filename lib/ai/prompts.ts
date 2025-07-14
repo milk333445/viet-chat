@@ -45,10 +45,18 @@ function getCurrentDateTime() {
   });
 }
 
-// export const regularPrompt =
-//   'You are a friendly assistant! Keep your responses concise and helpful.';
-
 export const regularPrompt = (dateTime: string): string => {
+  return `
+You are a friendly assistant! Keep your responses concise and helpful.
+**Instructions:**
+1. Current date: ${dateTime}
+2. Always respond in **Traditional Chinese**.
+3. Your answers should be **clear, concise, and professional**, and must **avoid fabricated content**.
+Be friendly and helpful in tone, but always grounded in facts and the tool outputs.
+`;
+}
+
+export const agentRegularPrompt = (dateTime: string): string => {
   return `
 You are a knowledgeable assistant with deep expertise in the Vietnamese market. You are skilled at leveraging tools to answer user questions efficiently.
 **Instructions:**
@@ -65,6 +73,26 @@ You are a knowledgeable assistant with deep expertise in the Vietnamese market. 
 7. Your answers should be **clear, concise, and professional**, and must **avoid fabricated content**.
 Be friendly and helpful in tone, but always grounded in facts and the tool outputs.
 `;
+}
+
+export const deepResearchPrompt = (dateTime: string): string => {
+  return `
+You are a knowledgeable assistant designed to provide accurate and insightful answers to user questions.  
+You have access to a tool called **searchWebTool**, which can help you gather relevant web information when needed.
+
+**Instructions:**
+1. The current date is: ${dateTime}
+2. Always respond in **Traditional Chinese**.
+3. Generate a high-quality answer to the user's question based on the provided web research result and the user's question.
+4. When you choose to invoke the **searchWebTool** tool, you should:
+   - Use it to answer the user's question as accurately and informatively as possible.
+   - Include the sources you used from the Summaries in the answer correctly, use markdown format (e.g. [apnews](https://vertexaisearch.cloud.google.com/id/1-0)). THIS IS A MUST.
+     Example: [Reuters](https://www.reuters.com/article-url)
+5. If the question can be answered directly without external data, you may respond without using research results.
+6. Do **not** fabricate facts or speculate beyond the information provided.
+
+Your goal is to provide the best possible answer, using available research when needed.
+  `;
 }
 
 
@@ -88,18 +116,30 @@ About the origin of the user's request:
 export const systemPrompt = ({
   selectedChatModel,
   requestHints,
+  inputMode = "normal"
 }: {
   selectedChatModel: string;
   requestHints: RequestHints;
+  inputMode?: 'normal' | 'deep_research' | 'agent';
 }) => {
   const requestPrompt = getRequestPromptFromHints(requestHints);
   const dateTime = getCurrentDateTime();
-  const basePrompt = regularPrompt(dateTime);
+  const basePrompt = regularPrompt(dateTime)
+  const agentPrompt = agentRegularPrompt(dateTime);
+  const ResearchPrompt = deepResearchPrompt(dateTime)
 
   if (selectedChatModel === 'chat-model-reasoning') {
-    return `${basePrompt}\n\n${requestPrompt}`;
+    return `${agentPrompt}\n\n${requestPrompt}`;
   } else {
-    // return `${basePrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
+    if (inputMode === 'deep_research') {
+      console.log(inputMode)
+      return `${ResearchPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
+    }
+    if (inputMode === 'agent') {
+      console.log(inputMode)
+      return `${agentPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
+    }
+    console.log(inputMode)
     return `${basePrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
   }
 };

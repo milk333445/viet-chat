@@ -65,6 +65,7 @@ export function Chat({
     generateId: generateUUID,
     fetch: fetchWithErrorHandlers,
     experimental_prepareRequestBody: (body) => ({
+      ...body.requestBody,
       id,
       message: body.messages.at(-1),
       selectedChatModel: initialChatModel,
@@ -74,6 +75,7 @@ export function Chat({
       mutate(unstable_serialize(getChatHistoryPaginationKey));
     },
     onError: (error) => {
+      // console.error('[LLM Error]', error);
       if (error instanceof ChatSDKError) {
         toast({
           type: 'error',

@@ -26,6 +26,7 @@ import { getWeather } from '@/lib/ai/tools/get-weather';
 import { multiply } from '@/lib/ai/tools/multiply';
 import { listUserUploadedFiles } from '@/lib/ai/tools/list-user-files';
 import { readUserFilesTool } from '@/lib/ai/tools/read-user-files';
+import { searchWebTool } from '@/lib/ai/tools/search-Web';
 import { getStockPriceNow, getStockPriceTrend, getIntradayStockPerformance } from '@/lib/ai/tools/viet_price';
 import { getFedMeetingData } from '@/lib/ai/tools/fed';
 import { getVietMacrostatSummary, getVietMacrostatTrend } from '@/lib/ai/tools/vietmacro';
@@ -73,6 +74,7 @@ export async function POST(request: Request) {
 
   try {
     const json = await request.json();
+    console.log(' > Raw JSON:', json);
     requestBody = postRequestBodySchema.parse(json);
     console.log(' > Request body:', requestBody);
   } catch (_) {
@@ -148,53 +150,67 @@ export async function POST(request: Request) {
         },
       ],
     });
-
+    console.log('💾 User message saved:', message);
     const streamId = generateUUID();
     await createStreamId({ streamId, chatId: id });
 
+    
+    const { input_mode = 'normal' } = requestBody;
+    console.log(' > input_mode:', input_mode);
     const stream = createDataStream({
       execute: (dataStream) => {
+        const fullToolList = {
+          getStockPriceNow,
+          getStockPriceTrend,
+          getIntradayStockPerformance,
+          getFedMeetingData,
+          getVietMacrostatSummary,
+          getVietMacrostatTrend,
+          searchVietNews,
+          searchWebTool,
+          listUserUploadedFiles: listUserUploadedFiles({ session }),
+          readUserFilesTool: readUserFilesTool({ session }),
+          createDocument: createDocument({ session, dataStream }),
+          updateDocument: updateDocument({ session, dataStream }),
+          requestSuggestions: requestSuggestions({ session, dataStream }),
+        };
+        
+        function getToolKeysByMode(mode: 'normal' | 'deep_research' | 'agent'): string[] {
+          if (mode === 'deep_research') {
+            return ['searchWebTool', 'createDocument', 'updateDocument', 'requestSuggestions'];
+          }
+          if (mode === "normal") {
+            return ['createDocument', 'updateDocument', 'requestSuggestions']
+          }
+          return [
+            'getStockPriceNow',
+            'getStockPriceTrend',
+            'getIntradayStockPerformance',
+            'getFedMeetingData',
+            'getVietMacrostatSummary',
+            'getVietMacrostatTrend',
+            'searchVietNews',
+            'listUserUploadedFiles',
+            'readUserFilesTool',
+          ];
+        }
+
+        const toolKeys = getToolKeysByMode(input_mode ?? 'normal');
+        console.log(' > toolKeys:', toolKeys);
+        const tools = Object.fromEntries(
+          toolKeys.map((key) => [key, (fullToolList as any)[key]])
+        );
+        console.log(' > tools (names):', Object.keys(tools));
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
-          system: systemPrompt({ selectedChatModel, requestHints }),
+          system: systemPrompt({ selectedChatModel, requestHints, inputMode: input_mode }),
           messages,
           maxSteps: 5,
           experimental_activeTools:
-            selectedChatModel === 'chat-model-reasoning'
-              ? []
-              : [
-                "getStockPriceNow", 
-                "getStockPriceTrend", 
-                "getIntradayStockPerformance",
-                'createDocument',
-                'updateDocument',
-                'requestSuggestions',
-                'listUserUploadedFiles',
-                'readUserFilesTool',
-                'getFedMeetingData',
-                'getVietMacrostatSummary',
-                'getVietMacrostatTrend',
-                'searchVietNews'
-                ],
+            selectedChatModel === 'chat-model-reasoning' ? [] : toolKeys,
           experimental_transform: smoothStream({ chunking: 'word' }),
           experimental_generateMessageId: generateUUID,
-          tools: {
-            getStockPriceNow,
-            getStockPriceTrend,
-            getIntradayStockPerformance,
-            getFedMeetingData,
-            getVietMacrostatSummary,
-            getVietMacrostatTrend,
-            searchVietNews,
-            listUserUploadedFiles: listUserUploadedFiles({ session }),
-            readUserFilesTool: readUserFilesTool({ session }),
-            createDocument: createDocument({ session, dataStream }),
-            updateDocument: updateDocument({ session, dataStream }),
-            requestSuggestions: requestSuggestions({
-              session,
-              dataStream,
-            }),
-          },
+          tools:tools,
           onFinish: async ({ response }) => {
             if (session.user?.id) {
               try {
@@ -234,6 +250,9 @@ export async function POST(request: Request) {
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,
             functionId: 'stream-text',
+          },
+          onError({ error }) {
+            console.error(error); // your error logging logic here
           },
         });
 

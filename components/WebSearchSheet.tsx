@@ -116,6 +116,16 @@ export function WebSearchSheet({ resultText, triggerText = '查看搜尋來源' 
                     </CardTitle>
                     </CardHeader>
                 <CardContent className="text-sm px-4 pb-3 text-muted-foreground space-y-1">
+                    {article.published && (
+                        <p>
+                            <strong>發布日期：</strong>{' '}
+                            {new Date(article.published).toLocaleDateString('zh-TW', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            })}
+                        </p>
+                        )}
                     <p>
                         <strong>搜尋引擎：</strong> {article.engine}
                     </p>

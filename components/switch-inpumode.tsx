@@ -45,7 +45,7 @@ export function ModeToggle({
               onClick={() => setInputMode("normal")}
             >
               <MessageCircleIcon className="size-4" />
-              一般對話
+              一般對話(實驗)
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
@@ -63,7 +63,7 @@ export function ModeToggle({
               onClick={() => setInputMode("deep_research")}
             >
               <SearchIcon className="size-4" />
-              深度檢索
+              深度檢索(實驗)
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">

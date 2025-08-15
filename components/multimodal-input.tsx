@@ -117,7 +117,7 @@ function PureMultimodalInput({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
-  const [inputMode, setInputMode] = useState<'agent' | 'normal' | 'deep_research'>('normal');
+  const [inputMode, setInputMode] = useState<'agent' | 'normal' | 'deep_research'>('agent');
   const submitForm = useCallback(() => {
     window.history.replaceState({}, '', `/chat/${chatId}`);
 

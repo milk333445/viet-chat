@@ -36,7 +36,7 @@ function PureSuggestedActions({
     {
       title: '瞭解',
       label: '聯準會最近 30 天的發布內容',
-      action: '聯準會最近 30 天有發布過什麼重要的內容嗎？請幫我整理一下。',
+      action: '聯準會最近 30 天有發布過什麼重要的內容嗎？請幫我詳細整理成一份文檔。',
     },
     {
       title: '摘要',

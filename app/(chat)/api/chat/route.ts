@@ -155,7 +155,7 @@ export async function POST(request: Request) {
     await createStreamId({ streamId, chatId: id });
 
     
-    const { input_mode = 'normal' } = requestBody;
+    const { input_mode = 'agent' } = requestBody;
     console.log(' > input_mode:', input_mode);
     const stream = createDataStream({
       execute: (dataStream) => {
@@ -192,6 +192,9 @@ export async function POST(request: Request) {
             'searchVietNews',
             'listUserUploadedFiles',
             'readUserFilesTool',
+            'createDocument', 
+            'updateDocument', 
+            'requestSuggestions'
           ];
         }
 

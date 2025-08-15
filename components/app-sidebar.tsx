@@ -65,14 +65,6 @@ export function AppSidebar({ user }: { user: User | undefined }) {
       </SidebarContent>
       <SidebarFooter>
         <Button variant="ghost" className="w-full justify-start" asChild>
-          <Link href="/files">
-            <span className="size-4 mr-2 inline-block">
-              <UploadIcon size={16} />
-            </span>
-            檔案管理中心
-          </Link>
-        </Button>
-        <Button variant="ghost" className="w-full justify-start" asChild>
           <Link
             href={process.env.NEXT_PUBLIC_VIET_DASHBOARD_URL || '#'}
             target="_blank"
@@ -81,10 +73,17 @@ export function AppSidebar({ user }: { user: User | undefined }) {
             <span className="size-4 mr-2 inline-block">
               <DatabaseIcon size={16} />
             </span>
-            資料庫後台
+            越南數據 Dashboard
           </Link>
         </Button>
-
+        <Button variant="ghost" className="w-full justify-start" asChild>
+          <Link href="/files">
+            <span className="size-4 mr-2 inline-block">
+              <UploadIcon size={16} />
+            </span>
+            檔案管理中心
+          </Link>
+        </Button>
         <HelpDialog />
         <div className="text-xs text-muted-foreground px-4 py-2">
           Powered by Max

@@ -46,7 +46,7 @@ export function HelpDialog() {
     },
     {
       icon: <BrainIcon className="w-6 h-6 text-primary" />,
-      title: '一般問答模式',
+      title: '一般問答模式(實驗)',
       desc: '支援語意釐清、詞句翻譯與說明市場專有名詞，適合用於日常提問、報告潤飾與語句修正。',
       features: [
         '解釋財經與投資術語',
@@ -61,7 +61,7 @@ export function HelpDialog() {
     },
     {
       icon: <SearchIcon className="w-6 h-6 text-primary" />,
-      title: 'Deep Search 模式',
+      title: '深度檢索模式(實驗)',
       desc: '具備多輪自動搜尋與資料整合能力，會反思知識缺口並補強資訊，提供具引用來源的完整回答，適合主題研究與內容撰寫。',
       features: [
         '根據提問自動生成搜尋關鍵字',

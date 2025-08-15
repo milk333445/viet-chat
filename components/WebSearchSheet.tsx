@@ -99,7 +99,7 @@ export function WebSearchSheet({ resultText, triggerText = '查看搜尋來源' 
               </AlertDescription>
             </Alert>
           ) : loading ? (
-            <p className="text-sm text-muted-foreground">🔄 讀取中...</p>
+            <p className="text-sm text-muted-foreground">讀取中...</p>
           ) : (
             articles?.map((article, index) => (
               <Card key={index}>

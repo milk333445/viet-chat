@@ -41,9 +41,12 @@ export async function POST(req: Request) {
 
     const { text, images } = await res.json();
 
-    console.log('圖片', images);
+    // console.log('圖片', images);
 
-    const sanitizedFolderName = path.parse(name).name; // 去掉副檔名，僅保留檔名
+    const sanitizedFolderName = path.parse(name).name
+      .replace(/\s+/g, '_') // 將空格替換為底線
+      .replace(/\./g, '') // 移除點號
+      .replace(/_/g, '_'); // 確保底線格式一致
     const imageDir = path.join(
       process.cwd(),
       'public',
@@ -82,7 +85,7 @@ export async function POST(req: Request) {
       await sharp(buffer).png().toFile(imagePath);
 
       // 生成圖片的 URL
-      const imageUrl = `/uploads/${userId}/images/${sanitizedFolderName}/${path.parse(imageName).name}`;
+      const imageUrl = `/uploads/${userId}/images/${sanitizedFolderName}/${path.parse(imageName).name}.png`;
       imageUrls.push(imageUrl);
 
       // 替換 text 中的路徑

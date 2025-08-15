@@ -19,7 +19,7 @@ export function ParsedContentDialog({ result }: { result: string }) {
       <DialogTrigger asChild>
         <Button size="sm" variant="secondary">查看解析內容</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>解析內容</DialogTitle>
         </DialogHeader>

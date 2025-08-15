@@ -49,6 +49,46 @@ const components: Partial<Components> = {
       </Link>
     );
   },
+  table: ({ node, children, ...props }) => {
+    return (
+      <div className="overflow-x-auto my-4">
+        <table className="min-w-full border-collapse border border-gray-300" {...props}>
+          {children}
+        </table>
+      </div>
+    );
+  },
+  thead: ({ node, children, ...props }) => {
+    return (
+      <thead className="bg-gray-50" {...props}>
+        {children}
+      </thead>
+    );
+  },
+  tbody: ({ node, children, ...props }) => {
+    return <tbody {...props}>{children}</tbody>;
+  },
+  tr: ({ node, children, ...props }) => {
+    return (
+      <tr className="border-b border-gray-200" {...props}>
+        {children}
+      </tr>
+    );
+  },
+  th: ({ node, children, ...props }) => {
+    return (
+      <th className="px-4 py-2 text-left font-semibold border border-gray-300 bg-gray-100" {...props}>
+        {children}
+      </th>
+    );
+  },
+  td: ({ node, children, ...props }) => {
+    return (
+      <td className="px-4 py-2 border border-gray-300" {...props}>
+        {children}
+      </td>
+    );
+  },
   h1: ({ node, children, ...props }) => {
     return (
       <h1 className="text-3xl font-semibold mt-6 mb-2" {...props}>
@@ -96,6 +136,7 @@ const components: Partial<Components> = {
 const remarkPlugins = [remarkGfm];
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
+  console.log('Markdown 原始內容:', children);
   return (
     <ReactMarkdown remarkPlugins={remarkPlugins} components={components}>
       {children}

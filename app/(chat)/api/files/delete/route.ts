@@ -18,13 +18,18 @@ export async function POST(req: Request) {
   }
 
   const filePath = path.join(process.cwd(), 'public', 'uploads', userId, name);
+  const sanitizedFolderName = path.parse(name).name
+    .replace(/\s+/g, '_') // 將空格替換為底線
+    .replace(/\./g, '') // 移除點號
+    .replace(/_/g, '_'); // 確保底線格式一致
+
   const imageDir = path.join(
     process.cwd(),
     'public',
     'uploads',
     userId,
     'images',
-    path.parse(name).name, // 使用去掉副檔名的檔名作為圖片資料夾名稱
+    sanitizedFolderName, // 使用處理後的資料夾名稱
   );
 
   try {

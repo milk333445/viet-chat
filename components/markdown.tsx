@@ -37,6 +37,17 @@ const components: Partial<Components> = {
     );
   },
   a: ({ node, children, ...props }) => {
+    let cleanHref = props.href;
+    if (cleanHref) {
+      const match = cleanHref.match(/^(https?:\/\/[^%]*)/);
+      if (match) {
+        cleanHref = match[1];
+      }
+      cleanHref = cleanHref.replace(/[。．.，,；;！!？?]+$/, '');
+    }
+    
+    console.log('cleaned link:', cleanHref);
+    
     return (
       // @ts-expect-error
       <Link
@@ -44,6 +55,7 @@ const components: Partial<Components> = {
         target="_blank"
         rel="noreferrer"
         {...props}
+        href={cleanHref}
       >
         {children}
       </Link>
